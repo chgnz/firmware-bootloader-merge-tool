@@ -1,22 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32126.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gbox ll merge", "gbox ll merge\gbox ll merge.csproj", "{A04831F3-6D1E-407F-8B5A-2624EA8A0121}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		LPC1768|Any CPU = LPC1768|Any CPU
+		STM32H7|Any CPU = STM32H7|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A04831F3-6D1E-407F-8B5A-2624EA8A0121}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A04831F3-6D1E-407F-8B5A-2624EA8A0121}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A04831F3-6D1E-407F-8B5A-2624EA8A0121}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A04831F3-6D1E-407F-8B5A-2624EA8A0121}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A04831F3-6D1E-407F-8B5A-2624EA8A0121}.LPC1768|Any CPU.ActiveCfg = LPC1768|Any CPU
+		{A04831F3-6D1E-407F-8B5A-2624EA8A0121}.LPC1768|Any CPU.Build.0 = LPC1768|Any CPU
+		{A04831F3-6D1E-407F-8B5A-2624EA8A0121}.STM32H7|Any CPU.ActiveCfg = STM32H7|Any CPU
+		{A04831F3-6D1E-407F-8B5A-2624EA8A0121}.STM32H7|Any CPU.Build.0 = STM32H7|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {61AD3E84-B71D-4228-AD78-62EA67705570}
 	EndGlobalSection
 EndGlobal

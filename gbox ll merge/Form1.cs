@@ -9,7 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace gbox_ll_merge
-{      
+{
     public partial class mapon_fw_merge : Form
     {
 
@@ -17,13 +17,18 @@ namespace gbox_ll_merge
         string firmware_location = null;
         string output_location = null;
 
-        const int BOOTLOADER_MAX_SIZE = 0x10000;
-        const int FILE_MAX_SIZE = 0x80000;
         const string maponRegistryAddress = @"Software\Mapon\Merger";
-        
+
+#if MCU_NXP_LPC1768
+        private IFwDescriptor descriptor = new LPC1768_Descriptor();
+#elif MCU_STM32H7
+        private IFwDescriptor descriptor = new STM32H7_Descriptor();
+#endif
+
         public mapon_fw_merge()
         {                      
             InitializeComponent();
+            this.Text  += $" ({descriptor.GetMcuName()})";
         }
 
         private void INFO(string error_str, Color c)
@@ -119,9 +124,9 @@ namespace gbox_ll_merge
                 bootloader_location = result;
                 tb_bootloader_location.Text = result;
                 save_path_in_register("Bootloader_Location", bootloader_location);
-                if (!validate_filesize(result, 0x10000))
+                if (!validate_filesize(result, descriptor.GetBootloaderMaxSize()))
                 {
-                    INFO("WARNING, Bootloader exceeds 64Kb", Color.OrangeRed);
+                    INFO($"WARNING, Bootloader exceeds {descriptor.GetBootloaderMaxSize()} bytes", Color.OrangeRed);
                 }
             }
         }
@@ -135,9 +140,9 @@ namespace gbox_ll_merge
                 tb_firmware_location.Text = result;
                 save_path_in_register("Firmware_Location", firmware_location);
 
-                if (!validate_filesize(result, FILE_MAX_SIZE - BOOTLOADER_MAX_SIZE))
+                if (!validate_filesize(result, descriptor.GetFirmwareFileMaxSize()))
                 {
-                    INFO("WARNING, Firmware exceeds " + (FILE_MAX_SIZE - BOOTLOADER_MAX_SIZE) / 1024 + " Kb", Color.OrangeRed);
+                    INFO("WARNING, Firmware exceeds " + (descriptor.GetFirmwareFileMaxSize()) / 1024 + " Kb", Color.OrangeRed);
                 }
             }
         }
@@ -165,16 +170,18 @@ namespace gbox_ll_merge
                 return false;
             }
 
-            if (!validate_filesize(bootloader_location, 0x10000) || !validate_filesize(firmware_location, 0x80000))
+            if (!validate_filesize(bootloader_location, descriptor.GetBootloaderMaxSize()))
             {
-                if (!validate_filesize(bootloader_location, 0x10000))
-                    INFO("Incorrect bootloader filesize", Color.Red);
-                else
-                    INFO("Incorrect firmware filesize", Color.Red);
-
+                INFO("Incorrect bootloader filesize", Color.Red);
                 return false;
             }
-                        
+
+            if (!validate_filesize(firmware_location, descriptor.GetFirmwareFileMaxSize()))
+            {
+                INFO("Incorrect firmware filesize", Color.Red);
+                return false;
+            }
+
             try
             {
                 using (BinaryWriter writer = new BinaryWriter(File.Open(output_location, FileMode.Create)))
@@ -187,7 +194,7 @@ namespace gbox_ll_merge
                     }
 
                     // izveidojam nepiciešamā izmēra bufferi un aizpildam ar 0xFF
-                    int buffer_size = BOOTLOADER_MAX_SIZE - (int)bootloader_real_size;
+                    int buffer_size = descriptor.GetBootloaderMaxSize() - (int)bootloader_real_size;
                     byte[] bootloader_buffer = new byte[buffer_size];
                     for (int i = 0; i < buffer_size; i++)
                     {
@@ -206,7 +213,7 @@ namespace gbox_ll_merge
                     }
 
                     // izveidojam nepiciešamā izmēra bufferi un aizpildam ar 0xFF
-                    buffer_size = FILE_MAX_SIZE - BOOTLOADER_MAX_SIZE - (int)firmware_real_size;
+                    buffer_size = descriptor.GetFirmwareFileMaxSize() - (int)firmware_real_size;
                     byte[] fw_buffer = new byte[buffer_size];
                     for (int i = 0; i < buffer_size; i++)
                     {
