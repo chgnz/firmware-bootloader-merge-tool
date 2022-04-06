@@ -1,3 +1,3 @@
 .vs/
-gbox ll merge/bin/
 gbox ll merge/obj/
+*.pdb
